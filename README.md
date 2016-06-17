@@ -14,9 +14,7 @@ Operating Systems supported
 
 License
 -------
-Copyright (C) Chamli Mohamed (mohamed.chamli@esprit.tn)
-
-License: GNU General Public License, version 3
+GNU General Public License, version 3
 
 
 Usage
