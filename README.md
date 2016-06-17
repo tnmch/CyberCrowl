@@ -58,7 +58,9 @@ Install
 (as root)
 
 ```
-  python setup.py install
+  git clone https://github.com/chamli/CyberCrowl.git
+  cd CyberCrowl/
+  python cybercrowl.py -h
 ```
 
 note: tested with python 2.7.6 
