@@ -6,6 +6,19 @@ CyberCrowl is a python Web path scanner tool.
 
 ![CyberCrowl]()
 
+Operating Systems supported
+---------------------------
+- Windows XP/7/8/10
+- GNU/Linux
+- MacOSX
+
+License
+-------
+Copyright (C) Chamli Mohamed (mohamed.chamli@esprit.tn)
+
+License: GNU General Public License, version 3
+
+
 Usage
 -----
 
