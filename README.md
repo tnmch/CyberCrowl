@@ -6,6 +6,14 @@ CyberCrowl is a python Web path scanner tool.
 
 ![CyberCrowl](https://raw.githubusercontent.com/chamli/CyberCrowl/master/cybercrowl.png)
 
+```
+    [+] AUTOR:        Chamli Mohamed
+    [+] EMAIL:        mohamed.chamli@esprit.tn
+    [+] GITHUB:       https://github.com/chamli
+    [+] TWITTER:      https://twitter.com/chamli_mohamed
+    [+] FACEBOOK:     https://fb.com/TnMcH
+```
+
 Operating Systems supported
 ---------------------------
 - Windows XP/7/8/10
