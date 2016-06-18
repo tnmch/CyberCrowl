@@ -185,14 +185,14 @@ def crowl(dirs, url):
 
         #print result
         if response != "":
-          print res
+          write(res)
 
         #save founded url log
         if save == 1:
             found = url+d
             logfile.writelines(found + "\n")
-      
-    print "\n\n[+]Found : %s directory" % (count)
+
+    write("\n\n[+]Found : %s directory" % (count))
     logfile.close()
       
     
