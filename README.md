@@ -62,3 +62,8 @@ Install
 ```
 
 note: tested with python 2.7.6 
+
+Contribution
+-------
+
+- Your contributions and suggestions are heartily♥ welcome. (✿◕‿◕)
