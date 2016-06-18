@@ -21,10 +21,10 @@ import httplib
 import sys
 import platform
 import argparse
-import tldextract
 
 from libs.colorama import Fore, Back, Style
 from libs import FileUtils
+from libs.tldextract import *
 
 __version__ = '1.1'
 __description__ = '''\
