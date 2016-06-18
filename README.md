@@ -72,6 +72,12 @@ Install
 
 note: tested with python 2.7.6 
 
+Version
+-------
+@ Version v1.1 : 
+- fixed bugs
+- add work with subdomain
+
 Contribution
 -------
 
