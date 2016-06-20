@@ -16,7 +16,7 @@
 # ----------------------------------------------------------------------
 # @author Chamli Mohamed 14|06|2016
 
-
+#TODO : threads , type cms, work with redirect
 import httplib
 import sys
 import platform
@@ -35,6 +35,7 @@ __description__ = '''\
   Github: https://github.com/chamli
   ___________________________________________
 '''
+
 
 #print banner
 def header():
@@ -64,6 +65,10 @@ def write(string):
 
 #fix url
 def fix_url(url):
+
+    #localhost
+    if url.find('localhost') or url.find('127.0.0.1'):
+        return url
     url = url.replace("https://", "").replace("http://", "")
 
     #check subdomain existe
@@ -94,7 +99,6 @@ def checkUrl(url):
         conn.request("GET", path)
         ress = conn.getresponse()
         code = ress.status
-
         if code in (300, 301, 302, 303, 307):
             return ress.getheader('Location')
         if (code == 200):
@@ -109,15 +113,16 @@ def read(list,url):
     #fix url
     url = fix_url(url)
 
+    ret = checkUrl(url)
     #check url work
-    if not checkUrl(url):
+    if not ret:
         message = "Check url please !! "
         message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
         message += Style.RESET_ALL
         exit(write(message))
 
     #redirect
-    elif checkUrl(url) != True:
+    elif ret != True:
         message = "Url redirect to : "+checkUrl(url)
         message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
         message += Style.RESET_ALL
@@ -139,6 +144,9 @@ def crowl(dirs, url):
     #get domain
     extracted = tldextract.extract(url)
     domain = "{}.{}".format(extracted.domain, extracted.suffix)
+    if domain.startswith('localhost') or domain.startswith('127.0.0.1'):
+        domain = domain.replace(".", "")
+
     logfile = open(domain+"_logs.txt", "w")
 
     for d in dirs:
@@ -198,48 +206,59 @@ def crowl(dirs, url):
     
 def main():
 
-    global list
-    parser = argparse.ArgumentParser(
-        version=__version__,
-        formatter_class=argparse.RawTextHelpFormatter,
-        prog='CyberCrowl',
-        description=__description__,
-        epilog='''\
-    EXAMPLE:
-    web site scan with internal wordlist
-      cybercrowl www.domain.com
-    web site scan with external wordlist
-      cybercrowl www.domain.com -w wordlist.txt
-                ''')
+    try:
+        global list
+        parser = argparse.ArgumentParser(
+            version=__version__,
+            formatter_class=argparse.RawTextHelpFormatter,
+            prog='CyberCrowl',
+            description=__description__,
+            epilog='''\
+        EXAMPLE:
+        web site scan with internal wordlist
+          cybercrowl www.domain.com
+        web site scan with external wordlist
+          cybercrowl www.domain.com -w wordlist.txt
+                    ''')
 
-    parser.add_argument('url', help='specific target url, like domain.com')
+        parser.add_argument('url', help='specific target url, like domain.com')
 
-    parser.add_argument('-w', help='specific path to wordlist file',
-                        nargs=1, dest='wordlist', required=False)
+        parser.add_argument('-w', help='specific path to wordlist file',
+                            nargs=1, dest='wordlist', required=False)
 
-    args = parser.parse_args()
+        args = parser.parse_args()
 
-    # args strings
-    domain = args.url
-    wlist = args.wordlist
-    if wlist: wlist = wlist[0]
+        # args strings
+        domain = args.url
+        wlist = args.wordlist
+        if wlist: wlist = wlist[0]
 
-    #print banner
-    header()
+        #print banner
+        header()
 
-    #check args
-    if domain:
-        if wlist:
-            list = open(wlist,"r")
+        #check args
+        if domain:
+            if wlist:
+                list = open(wlist,"r")
+            else:
+                list = open("list.txt", "r")
         else:
-            list = open("list.txt", "r")
-    else:
-        exit('error arguments: use cybercrowl -h to help')
-    # read
-    read(list,domain)
-    
-    #close
-    list.close()
+            exit('error arguments: use cybercrowl -h to help')
+        # read
+        read(list,domain)
+
+        #close
+        list.close()
+
+    except KeyboardInterrupt:
+
+        print '[!] Ctrl + C detected\n[!] Exiting'
+        sys.exit(0)
+
+    except EOFError:
+
+        print '[!] Ctrl + D detected\n[!] Exiting'
+        sys.exit(0)
 
 
 if __name__ == '__main__':
