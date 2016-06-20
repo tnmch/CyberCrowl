@@ -16,7 +16,6 @@
 # ----------------------------------------------------------------------
 # @author Chamli Mohamed 14|06|2016
 
-#TODO : threads , type cms, work with redirect
 import httplib
 import sys
 import platform
