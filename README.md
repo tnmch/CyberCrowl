@@ -76,8 +76,9 @@ Version
 @ Version v1.1 : 
 - fixed bugs
 - add work with subdomain
-@version v1.2:
+@ version v1.2 :
 - Added delay option for avoiding blacklisting
+
 Contribution
 -------
 
