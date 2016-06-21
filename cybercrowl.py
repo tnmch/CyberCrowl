@@ -20,6 +20,7 @@ import httplib
 import sys
 import platform
 import argparse
+import time
 
 from libs.colorama import Fore, Back, Style
 from libs import FileUtils
@@ -107,7 +108,7 @@ def checkUrl(url):
         return False
 
 #read url
-def read(list,url):
+def read(list,url,delay):
 
     #fix url
     url = fix_url(url)
@@ -134,10 +135,10 @@ def read(list,url):
     write(message)
 
     #after check ,start scan
-    crowl(list,url)
+    crowl(list,url,delay)
 
 #crawl directory
-def crowl(dirs, url):
+def crowl(dirs, url, delay):
     count = 0
 
     #get domain
@@ -199,6 +200,10 @@ def crowl(dirs, url):
             found = url+d
             logfile.writelines(found + "\n")
 
+        if delay > 0:
+            time.sleep(float(delay))
+            print "Sleeping for %s seconds" % str(delay)
+
     write("\n\n[+]Found : %s directory" % (count))
     logfile.close()
       
@@ -225,11 +230,15 @@ def main():
         parser.add_argument('-w', help='specific path to wordlist file',
                             nargs=1, dest='wordlist', required=False)
 
+        parser.add_argument('-d', help='add delay between requests',
+                            dest='delay', type=float, default=0)
+
         args = parser.parse_args()
 
         # args strings
         domain = args.url
         wlist = args.wordlist
+        dlay = args.delay
         if wlist: wlist = wlist[0]
 
         #print banner
@@ -244,7 +253,7 @@ def main():
         else:
             exit('error arguments: use cybercrowl -h to help')
         # read
-        read(list,domain)
+        read(list,domain,dlay)
 
         #close
         list.close()
