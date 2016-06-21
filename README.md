@@ -43,6 +43,7 @@ optional arguments:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
   -w WORDLIST    specific path to wordlist file
+  -d DELAY       add delay between requests
 ```
 
 Example
