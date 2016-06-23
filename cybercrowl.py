@@ -26,7 +26,7 @@ from libs.colorama import Fore, Back, Style
 from libs import FileUtils
 from libs.tldextract import *
 
-__version__ = '1.1'
+__version__ = '1.2'
 __description__ = '''\
   ___________________________________________
 
@@ -40,7 +40,7 @@ __description__ = '''\
 #print banner
 def header():
     MAYOR_VERSION = 1
-    MINOR_VERSION = 1
+    MINOR_VERSION = 2
     REVISION = 0
     VERSION = {
         "MAYOR_VERSION": MAYOR_VERSION,
