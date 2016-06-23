@@ -6,6 +6,7 @@ import re
 import socket
 
 import requests
+from requests_file import FileAdapter
 
 # pylint: disable=import-error,invalid-name,no-name-in-module,redefined-builtin
 try:  # pragma: no cover
