@@ -67,6 +67,7 @@ Install
 ```
   git clone https://github.com/chamli/CyberCrowl.git
   cd CyberCrowl/
+  pip install tldextract
   python cybercrowl.py -h
 ```
 
