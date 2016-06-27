@@ -26,6 +26,10 @@ from libs.colorama import Fore, Back, Style
 from libs import FileUtils
 from libs.tldextract import *
 
+
+if platform.system() == 'Windows':
+    from libs.colorama.win32 import *
+    
 __version__ = '1.2'
 __description__ = '''\
   ___________________________________________
