@@ -29,7 +29,7 @@ from libs.tldextract import *
 
 if platform.system() == 'Windows':
     from libs.colorama.win32 import *
-    
+
 __version__ = '1.2'
 __description__ = '''\
   ___________________________________________
@@ -41,7 +41,7 @@ __description__ = '''\
 '''
 
 
-#print banner
+# print banner
 def header():
     MAYOR_VERSION = 1
     MINOR_VERSION = 2
@@ -56,6 +56,7 @@ def header():
     message = Style.BRIGHT + Fore.MAGENTA + PROGRAM_BANNER + Style.RESET_ALL
     write(message)
 
+
 def write(string):
     if platform.system() == 'Windows':
         sys.stdout.write(string)
@@ -67,15 +68,17 @@ def write(string):
     sys.stdout.flush()
     sys.stdout.flush()
 
-#fix url
+# fix url
+
+
 def fix_url(url):
 
-    #localhost
+    # localhost
     if url.find('localhost') or url.find('127.0.0.1'):
         return url
     url = url.replace("https://", "").replace("http://", "")
 
-    #check subdomain existe
+    # check subdomain existe
     ext = tldextract.extract(url)
     if ext.subdomain != 'www':
         return url
@@ -83,20 +86,22 @@ def fix_url(url):
     if url.startswith('www.'):
         return url
     else:
-         url = 'www.' + url
-         return url
+        url = 'www.' + url
+        return url
 
-#check url work
+# check url work
+
+
 def checkUrl(url):
 
-    #split url
+    # split url
     url_s = url
     path = '/'
     if url.find('/') != -1:
-        url_s = url.rsplit('/',1)[0]
-        path += url.rsplit('/',1)[1]
+        url_s = url.rsplit('/', 1)[0]
+        path += url.rsplit('/', 1)[1]
 
-    #check
+    # check
     try:
         conn = httplib.HTTPConnection(url_s)
         conn.follow_redirects = False
@@ -111,47 +116,51 @@ def checkUrl(url):
     except:
         return False
 
-#read url
-def read(list,url,delay):
+# read url
 
-    #fix url
+
+def read(list, url, delay):
+
+    # fix url
     url = fix_url(url)
 
     ret = checkUrl(url)
-    #check url work
+    # check url work
     if not ret:
         message = "Check url please !! "
         message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
         message += Style.RESET_ALL
         exit(write(message))
 
-    #redirect
+    # redirect
     elif ret != True:
-        message = "Url redirect to : "+checkUrl(url)
+        message = "Url redirect to : " + checkUrl(url)
         message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
         message += Style.RESET_ALL
         exit(write(message))
 
-    #print Target
+    # print Target
     message = Style.BRIGHT + Fore.YELLOW
     message += '\nTarget: {0}\n'.format(Fore.CYAN + url + Fore.YELLOW)
     message += Style.RESET_ALL
     write(message)
 
-    #after check ,start scan
-    crowl(list,url,delay)
+    # after check ,start scan
+    crowl(list, url, delay)
 
-#crawl directory
+# crawl directory
+
+
 def crowl(dirs, url, delay):
     count = 0
 
-    #get domain
+    # get domain
     extracted = tldextract.extract(url)
     domain = "{}.{}".format(extracted.domain, extracted.suffix)
     if domain.startswith('localhost') or domain.startswith('127.0.0.1'):
         domain = domain.replace(".", "")
 
-    logfile = open(domain+"_logs.txt", "w")
+    logfile = open(domain + "_logs.txt", "w")
 
     for d in dirs:
 
@@ -168,40 +177,43 @@ def crowl(dirs, url, delay):
             url_s = url.rsplit('/', 1)[0]
             path += url.rsplit('/', 1)[1]
         conn = httplib.HTTPConnection(url_s)
-        conn.request("GET", path+d)
+        conn.request("GET", path + d)
         ress = conn.getresponse()
         response = ress.status
 
-        #size
+        # size
         try:
-            size = int(ress.getheader('content-length'))
-        except (KeyError, ValueError):
+            if (ress.getheader('content-length') is not None):
+                size = int(ress.getheader('content-length'))
+            else:
+                size = 0 
+        except (KeyError, ValueError, TypeError):
             size = len(ress.body)
         finally:
             f_size = FileUtils.sizeHuman(size)
 
-        #check reponse
+        # check reponse
         if (response == 200 or response == 302 or response == 304):
-          res = "[+] %s - %s : HTTP %s Found" % (url_s+path+d,f_size,response)
-          res = Fore.GREEN + res + Style.RESET_ALL
-          save = 1
-          count +=1
+            res = "[+] %s - %s : HTTP %s Found" % (url_s + path + d, f_size, response)
+            res = Fore.GREEN + res + Style.RESET_ALL
+            save = 1
+            count += 1
         if (response == 401):
-          res = "[-] %s - %s : HTTP %s : Unauthorized" % (url_s+path+d,f_size,response)
-          res = message = Fore.YELLOW + res + Style.RESET_ALL
+            res = "[-] %s - %s : HTTP %s : Unauthorized" % (url_s + path + d, f_size, response)
+            res = message = Fore.YELLOW + res + Style.RESET_ALL
         if (response == 403):
-          res = "[-] %s - %s : HTTP %s : Needs authorization" % (url_s+path+d,f_size,response)
-          res = Fore.BLUE + res + Style.RESET_ALL
+            res = "[-] %s - %s : HTTP %s : Needs authorization" % (url_s + path + d, f_size, response)
+            res = Fore.BLUE + res + Style.RESET_ALL
         if (response == 404):
-          res = "[-] %s - %s : HTTP %s : Not Found" % (url_s+path+d,f_size,response)
+            res = "[-] %s - %s : HTTP %s : Not Found" % (url_s + path + d, f_size, response)
 
-        #print result
+        # print result
         if response != "":
-          write(res)
+            write(res)
 
-        #save founded url log
+        # save founded url log
         if save == 1:
-            found = url+d
+            found = url + d
             logfile.writelines(found + "\n")
 
         if delay > 0:
@@ -210,8 +222,8 @@ def crowl(dirs, url, delay):
 
     write("\n\n[+]Found : %s directory" % (count))
     logfile.close()
-      
-    
+
+
 def main():
 
     try:
@@ -243,23 +255,24 @@ def main():
         domain = args.url
         wlist = args.wordlist
         dlay = args.delay
-        if wlist: wlist = wlist[0]
+        if wlist:
+            wlist = wlist[0]
 
-        #print banner
+        # print banner
         header()
 
-        #check args
+        # check args
         if domain:
             if wlist:
-                list = open(wlist,"r")
+                list = open(wlist, "r")
             else:
                 list = open("list.txt", "r")
         else:
             exit('error arguments: use cybercrowl -h to help')
         # read
-        read(list,domain,dlay)
+        read(list, domain, dlay)
 
-        #close
+        # close
         list.close()
 
     except KeyboardInterrupt:
@@ -274,4 +287,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+    main()
