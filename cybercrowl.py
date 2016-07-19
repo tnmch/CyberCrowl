@@ -69,8 +69,6 @@ def write(string):
     sys.stdout.flush()
 
 # fix url
-
-
 def fix_url(url):
 
     # localhost
@@ -90,8 +88,6 @@ def fix_url(url):
         return url
 
 # check url work
-
-
 def checkUrl(url):
 
     # split url
@@ -117,8 +113,6 @@ def checkUrl(url):
         return False
 
 # read url
-
-
 def read(list, url, delay):
 
     # fix url
@@ -148,9 +142,8 @@ def read(list, url, delay):
     # after check ,start scan
     crowl(list, url, delay)
 
+
 # crawl directory
-
-
 def crowl(dirs, url, delay):
     count = 0
 
