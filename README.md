@@ -6,6 +6,14 @@ CyberCrowl is a python Web path scanner tool.
 
 ![CyberCrowl](https://raw.githubusercontent.com/chamli/CyberCrowl/master/cybercrowl.png)
 
+```
+    [+] AUTOR:        Chamli Mohamed
+    [+] EMAIL:        mohamed.chamli@esprit.tn
+    [+] GITHUB:       https://github.com/chamli
+    [+] TWITTER:      https://twitter.com/chamli_mohamed
+    [+] FACEBOOK:     https://fb.com/TnMcH
+```
+
 Operating Systems supported
 ---------------------------
 - Windows XP/7/8/10
@@ -14,9 +22,7 @@ Operating Systems supported
 
 License
 -------
-Copyright (C) Chamli Mohamed (mohamed.chamli@esprit.tn)
-
-License: GNU General Public License, version 3
+GNU General Public License, version 3
 
 
 Usage
@@ -37,6 +43,7 @@ optional arguments:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
   -w WORDLIST    specific path to wordlist file
+  -d DELAY       add delay between requests
 ```
 
 Example
@@ -60,7 +67,22 @@ Install
 ```
   git clone https://github.com/chamli/CyberCrowl.git
   cd CyberCrowl/
+  pip install tldextract
   python cybercrowl.py -h
 ```
 
 note: tested with python 2.7.6 
+
+Version
+-------
+@ Version v1.1 : 
+- fixed bugs
+- add work with subdomain
+
+@ Version v1.2 :
+- Added delay option for avoiding blacklisting
+
+Contribution
+-------
+
+- Your contributions and suggestions are heartily♥ welcome. (✿◕‿◕)
