@@ -4,7 +4,7 @@ CyberCrowl Scan v.1.0
 
 CyberCrowl is a python Web path scanner tool.
 
-![CyberCrowl](https://raw.githubusercontent.com/chamli/CyberCrowl/master/cybercrowl.png)
+![CyberCrowl](https://raw.githubusercontent.com/chamli/CyberCrowl/master/pic/cybercrowl.png)
 
 ```
     [+] AUTOR:        Chamli Mohamed
