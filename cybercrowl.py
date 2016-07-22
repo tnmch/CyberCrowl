@@ -153,7 +153,9 @@ def crowl(dirs, url, delay):
     if domain.startswith('localhost') or domain.startswith('127.0.0.1'):
         domain = domain.replace(".", "")
 
-    logfile = open(domain + "_logs.txt", "w")
+    if not os.path.exists("reports"):
+        os.makedirs("reports")
+    logfile = open("reports/" + domain + "_logs.txt", "w+")
 
     for d in dirs:
 
