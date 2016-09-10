@@ -1,5 +1,5 @@
 ==========================
-CyberCrowl Scan v.1.0
+CyberCrowl Scan v.3.0
 ==========================
 
 CyberCrowl is a python Web path scanner tool.
