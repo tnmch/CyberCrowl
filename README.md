@@ -83,6 +83,9 @@ Version
 @ Version v1.2 :
 - Added delay option for avoiding blacklisting
 
+@ Version v1.4 :
+- Fix url redirect issue & add some features  
+
 Contribution
 -------
 
