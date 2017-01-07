@@ -109,8 +109,8 @@ def read(list, url, delay):
     ret = checkUrl(url)
     url_ok = False
     if "Maybe" in str(ret):
-        write("Would you like to change url to "+ ret.rsplit(';', 1)[1] + " (y/n) : ")
-        choice = raw_input()
+        w = "Would you like to change url to "+ ret.rsplit(';', 1)[1] + " (y/n) : "
+        choice = raw_input(w)
         res = yes_no(choice)
         if res:
             url_ok = True
