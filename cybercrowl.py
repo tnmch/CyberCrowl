@@ -17,10 +17,10 @@
 # @author Chamli Mohamed 14|06|2016
 
 import os
-import httplib
 import sys
 import platform
 import argparse
+import requests
 import time
 
 from libs.colorama import Fore, Back, Style
@@ -31,7 +31,7 @@ from libs.tldextract import *
 if platform.system() == 'Windows':
     from libs.colorama.win32 import *
 
-__version__ = '1.3'
+__version__ = '1.4'
 __description__ = '''\
   ___________________________________________
 
@@ -45,7 +45,7 @@ __description__ = '''\
 # print banner
 def header():
     MAYOR_VERSION = 1
-    MINOR_VERSION = 3
+    MINOR_VERSION = 4
     REVISION = 0
     VERSION = {
         "MAYOR_VERSION": MAYOR_VERSION,
@@ -57,6 +57,17 @@ def header():
     message = Style.BRIGHT + Fore.MAGENTA + PROGRAM_BANNER + Style.RESET_ALL
     write(message)
 
+#ask_change_url
+def yes_no(answer):
+    yes = set(['yes', 'y', 'ye', ''])
+    no = set(['no', 'n'])
+
+    while True:
+        choice = answer.lower()
+        if choice in yes:
+            return True
+        elif choice in no:
+            return False
 
 def write(string):
     if platform.system() == 'Windows':
@@ -69,67 +80,43 @@ def write(string):
     sys.stdout.flush()
     sys.stdout.flush()
 
-# fix url
-def fix_url(url):
-
-    # localhost
-    if url.find('localhost') or url.find('127.0.0.1'):
-        return url
-    url = url.replace("https://", "").replace("http://", "")
-
-    # check subdomain existe
-    ext = tldextract.extract(url)
-    if ext.subdomain != 'www':
-        return url
-
-    if url.startswith('www.'):
-        return url
-    else:
-        url = 'www.' + url
-        return url
-
 # check url work
 def checkUrl(url):
 
-    # split url
-    url_s = url
-    path = '/'
-    if url.find('/') != -1:
-        url_s = url.rsplit('/', 1)[0]
-        path += url.rsplit('/', 1)[1]
-
     # check
     try:
-        conn = httplib.HTTPConnection(url_s)
-        conn.follow_redirects = False
-        conn.request("GET", path)
-        ress = conn.getresponse()
-        code = ress.status
-        if code in (300, 301, 302, 303, 307):
-            return ress.getheader('Location')
-        if (code == 200):
-            return True
-        return False
+        ress1 = requests.head(url , allow_redirects=True)
+
+        if url != ress1.url:
+            return "Maybe you should use ;"+ress1.url
+        else:
+            ress = requests.get(url)
+            code = ress.status_code
+            if (code == 200):
+                return True
+            else:
+               return False
+    except requests.exceptions.ConnectionError:
+        return "Try a different url please"
+    except requests.exceptions.MissingSchema:
+        return "Try a different url please"
     except:
         return False
 
 # read url
 def read(list, url, delay):
 
-    # fix url
-    url = fix_url(url)
-
     ret = checkUrl(url)
-    # check url work
-    if not ret:
-        message = "Check url please !! "
-        message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
-        message += Style.RESET_ALL
-        exit(write(message))
-
-    # redirect
-    elif ret != True:
-        message = "Url redirect to : " + checkUrl(url)
+    url_ok = False
+    if "Maybe" in str(ret):
+        write("Would you like to change url to "+ ret.rsplit(';', 1)[1] + " (y/n) : ")
+        choice = raw_input()
+        res = yes_no(choice)
+        if res:
+            url_ok = True
+            url = ret.rsplit(';', 1)[1]
+    if ret != True and url_ok != True:
+        message = "Check url (ex: https://github.com) " + (ret if "Try" in str(ret) else "" )
         message = "\n\n" + Fore.YELLOW + "[-]" + Style.RESET_ALL + Style.BRIGHT + Back.RED + message
         message += Style.RESET_ALL
         exit(write(message))
@@ -141,6 +128,7 @@ def read(list, url, delay):
     write(message)
 
     # after check ,start scan
+    #print url
     crowl(list, url, delay)
 
 
@@ -151,8 +139,6 @@ def crowl(dirs, url, delay):
     # get domain
     extracted = tldextract.extract(url)
     domain = "{}.{}".format(extracted.domain, extracted.suffix)
-    if domain.startswith('localhost') or domain.startswith('127.0.0.1'):
-        domain = domain.replace(".", "")
 
     if not os.path.exists("reports"):
         os.makedirs("reports")
@@ -165,43 +151,42 @@ def crowl(dirs, url, delay):
 
         res = ""
         save = 0
-
-        # split url
-        url_s = url
-        path = '/'
-        if url.find('/') != -1:
-            url_s = url.rsplit('/', 1)[0]
-            path += url.rsplit('/', 1)[1]
-        conn = httplib.HTTPConnection(url_s)
-        conn.request("GET", path + d)
-        ress = conn.getresponse()
-        response = ress.status
+        f_url  = url + "/" + d
+        ress = requests.get(f_url, allow_redirects=False)
+        response = ress.status_code
 
         # size
         try:
-            if (ress.getheader('content-length') is not None):
-                size = int(ress.getheader('content-length'))
+            if (ress.headers['content-length'] is not None):
+                size = int(ress.headers['content-length'])
             else:
                 size = 0 
         except (KeyError, ValueError, TypeError):
-            size = len(ress.body)
+            size = len(ress.content)
         finally:
             f_size = FileUtils.sizeHuman(size)
 
         # check reponse
         if (response == 200 or response == 302 or response == 304):
-            res = "[+] %s - %s : HTTP %s Found" % (url_s + path + d, f_size, response)
+            res = "[+] %s - %s : HTTP %s Found" % (f_url, f_size, response)
             res = Fore.GREEN + res + Style.RESET_ALL
             save = 1
             count += 1
-        if (response == 401):
-            res = "[-] %s - %s : HTTP %s : Unauthorized" % (url_s + path + d, f_size, response)
+        elif (response == 401):
+            res = "[-] %s - %s : HTTP %s : Unauthorized" % (f_url, f_size, response)
             res = message = Fore.YELLOW + res + Style.RESET_ALL
-        if (response == 403):
-            res = "[-] %s - %s : HTTP %s : Needs authorization" % (url_s + path + d, f_size, response)
+        elif (response == 403):
+            res = "[-] %s - %s : HTTP %s : Needs authorization" % (f_url, f_size, response)
             res = Fore.BLUE + res + Style.RESET_ALL
-        if (response == 404):
-            res = "[-] %s - %s : HTTP %s : Not Found" % (url_s + path + d, f_size, response)
+        elif (response == 404):
+            res = "[-] %s - %s : HTTP %s : Not Found" % (f_url, f_size, response)
+        elif (response == 405):
+            res = "[-] %s - %s : HTTP %s : Method Not Allowed" % (f_url, f_size, response)
+        elif (response == 406):
+            res = "[-] %s - %s : HTTP %s : Not Acceptable" % (f_url, f_size, response)
+        else :
+            res = "[-] %s - %s : HTTP %s : Unknown response" % (f_url, f_size, response)
+
 
         # print result
         if response != "":
