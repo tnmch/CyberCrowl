@@ -70,6 +70,7 @@ web site scan with external wordlist
   pip install tldextract
   pip install requests
   pip install requests_ntlm
+  pip install fake_useragent
   python cybercrowl.py -h
 ```
 
