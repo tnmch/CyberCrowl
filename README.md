@@ -1,5 +1,5 @@
 
-# CyberCrowl Scan v.1.4
+# CyberCrowl Scan v.1.5
 
 
 CyberCrowl is a python Web path scanner tool.
@@ -86,6 +86,11 @@ Version
 
 @ Version v1.4 :
 - Fix url redirect issue & add some features  
+
+@ Version v1.5 :
+- Support User agent randomization
+- HTTP proxy support (Ex : burpsuite proxy)
+- Support different HTTP protocol authentication (Basic | Digest | NTLM) 
 
 Contribution
 -------
