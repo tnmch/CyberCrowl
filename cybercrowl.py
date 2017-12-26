@@ -22,16 +22,23 @@ import platform
 import argparse
 import requests
 import time
+from fake_useragent import UserAgent
+from requests_ntlm import HttpNtlmAuth
+from requests.auth import HTTPBasicAuth
+from requests.auth import HTTPDigestAuth
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 
 from libs.colorama import Fore, Back, Style
 from libs import FileUtils
 from libs.tldextract import *
 
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 if platform.system() == 'Windows':
     from libs.colorama.win32 import *
 
-__version__ = '1.4'
+__version__ = '1.5'
 __description__ = '''\
   ___________________________________________
 
@@ -45,7 +52,7 @@ __description__ = '''\
 # print banner
 def header():
     MAYOR_VERSION = 1
-    MINOR_VERSION = 4
+    MINOR_VERSION = 5
     REVISION = 0
     VERSION = {
         "MAYOR_VERSION": MAYOR_VERSION,
@@ -104,7 +111,7 @@ def checkUrl(url):
         return False
 
 # read url
-def read(list, url, delay):
+def read(url):
 
     ret = checkUrl(url)
     url_ok = False
@@ -126,14 +133,23 @@ def read(list, url, delay):
     message += '\nTarget: {0}\n'.format(Fore.CYAN + url + Fore.YELLOW)
     message += Style.RESET_ALL
     write(message)
-
-    # after check ,start scan
-    #print url
-    crowl(list, url, delay)
+    
+    return url
 
 
 # crawl directory
-def crowl(dirs, url, delay):
+def crowl(dirs, url, args):
+
+    # args strings
+    domain = args.url
+    wlist = args.wordlist
+    delay = args.delay
+    random_agent = args.randomAgent
+    auth_type = args.authType.lower() if args.authType is not None else ""
+    auth_cred = "".join(args.authCred).rsplit(':') if args.authCred is not None else ""
+    proxy = "".join(args.proxy)
+
+    # init count valid url
     count = 0
 
     # get domain
@@ -144,15 +160,56 @@ def crowl(dirs, url, delay):
         os.makedirs("reports")
     logfile = open("reports/" + domain + "_logs.txt", "w+")
 
-    for d in dirs:
+    # init user agent
+    if random_agent == True:
+        ua = UserAgent()
+     
+    # init default user agent    
+    headers = { 'User-Agent':  'CyberCrowl' }
+    
+    # init default proxy 
+    proxies = {"http": proxy,"https": proxy}
+    
+    for dir in dirs:
 
-        d = d.replace("\n", "")
-        d = "%s" % (d)
+        dir = dir.replace("\n", "")
+        dir = "%s" % (dir)
 
         res = ""
         save = 0
-        f_url  = url + "/" + d
-        ress = requests.get(f_url, allow_redirects=False)
+        f_url  = url + "/" + dir
+        
+        # add cookie header
+        
+        if random_agent == True:
+            headers = { 'User-Agent':  ua.random }
+                        
+        
+        # make request with different type of authentication
+        if auth_type == "basic":
+            try:
+                ress = requests.get(f_url, headers=headers ,auth=HTTPBasicAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ProxyError:
+                exit(write("Check your proxy please! "))
+                
+        elif auth_type == "digest":
+            try:
+                ress = requests.get(f_url, headers=headers ,auth=HTTPDigestAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ProxyError:
+                exit(write("Check your proxy please! "))
+                
+        elif auth_type == "ntlm":
+            try:
+                ress = requests.get(f_url, headers=headers ,auth=HttpNtlmAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ProxyError:
+                exit(write("Check your proxy please! "))
+
+        else:
+            try:
+                ress = requests.get(f_url, headers=headers ,allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ProxyError:
+                exit(write("Check your proxy please! "))
+                
         response = ress.status_code
 
         # size
@@ -161,6 +218,7 @@ def crowl(dirs, url, delay):
                 size = int(ress.headers['content-length'])
             else:
                 size = 0 
+                
         except (KeyError, ValueError, TypeError):
             size = len(ress.content)
         finally:
@@ -194,7 +252,7 @@ def crowl(dirs, url, delay):
 
         # save founded url log
         if save == 1:
-            found = url + d
+            found = url + dir
             logfile.writelines(found + "\n")
 
         if delay > 0:
@@ -222,20 +280,42 @@ def main():
           cybercrowl www.domain.com -w wordlist.txt
                     ''')
 
-        parser.add_argument('url', help='specific target url, like domain.com')
+        parser.add_argument('url', help='specific target url, like domain.com', type=str)
 
         parser.add_argument('-w', help='specific path to wordlist file',
-                            nargs=1, dest='wordlist', required=False)
+                            nargs=1, dest='wordlist', type=str, required=False)
 
         parser.add_argument('-d', help='add delay between requests',
-                            dest='delay', type=float, default=0)
+                            nargs=1, dest='delay', type=float, default=0)
+                            
+        parser.add_argument('--random-agent', dest="randomAgent", 
+                             help='Use randomly selected HTTP User-Agent header value',
+                             action='store_true')
+        
+        parser.add_argument("--auth-type", dest="authType", 
+                            nargs='?', type=str, help="HTTP authentication type ""(Basic, Digest or NTLM)", required=False)
+                            
+        parser.add_argument("--auth-cred", dest="authCred",
+                            nargs=1, type=str, help="HTTP authentication credentials ""(name:password)", required=False)
+                            
+        parser.add_argument("--proxy", dest="proxy",
+                            nargs=1, type=str, help="Use a proxy to connect to the target URL", required=False)
+
 
         args = parser.parse_args()
+        
+        required_together = ('authType','authCred')
+
+        # args.authType will be None if authType is not provided
+        if any([getattr(args,x) for x in required_together]):
+            if not all([getattr(args,x) for x in required_together]):
+                exit(write("Cannot supply --auth-type without --auth-cred"))
+                
 
         # args strings
         domain = args.url
         wlist = args.wordlist
-        dlay = args.delay
+        
         if wlist:
             wlist = wlist[0]
 
@@ -249,10 +329,14 @@ def main():
             else:
                 list = open("list.txt", "r")
         else:
-            exit('error arguments: use cybercrowl -h to help')
-        # read
-        read(list, domain, dlay)
+            exit(write('error arguments: use cybercrowl -h to help'))
 
+        # read
+        url = read(domain)
+        
+        # After check ,start scan
+        crowl(list, url, args)
+    
         # close
         list.close()
 
