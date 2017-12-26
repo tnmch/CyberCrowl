@@ -147,7 +147,7 @@ def crowl(dirs, url, args):
     random_agent = args.randomAgent
     auth_type = args.authType.lower() if args.authType is not None else ""
     auth_cred = "".join(args.authCred).rsplit(':') if args.authCred is not None else ""
-    proxy = "".join(args.proxy)
+    proxy = "".join(args.proxy) if args.proxy is not None else None
 
     # init count valid url
     count = 0
