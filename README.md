@@ -69,6 +69,7 @@ web site scan with external wordlist
   cd CyberCrowl/
   pip install tldextract
   pip install requests
+  pip install requests_ntlm
   python cybercrowl.py -h
 ```
 
