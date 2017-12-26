@@ -67,10 +67,7 @@ web site scan with external wordlist
 ```
   git clone https://github.com/chamli/CyberCrowl.git
   cd CyberCrowl/
-  pip install tldextract
-  pip install requests
-  pip install requests_ntlm
-  pip install fake_useragent
+  pip install -r requirements.txt
   python cybercrowl.py -h
 ```
 
