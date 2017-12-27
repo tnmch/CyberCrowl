@@ -89,6 +89,7 @@ Version
 - Support User agent randomization
 - HTTP proxy support (Ex : burpsuite proxy)
 - Support different HTTP protocol authentication (Basic | Digest | NTLM) 
+- Auto update option
 
 Contribution
 -------
