@@ -141,7 +141,7 @@ def update():
         infoMsg += "GitHub repository"
         write(infoMsg)
 
-        debugMsg = "sqlmap will try to update itself using 'git' command"
+        debugMsg = "CyberCrowl will try to update itself using 'git' command"
         write(debugMsg)
 
 
