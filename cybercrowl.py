@@ -138,10 +138,10 @@ def update():
     else:
         infoMsg = "updating CyberCrowl to the latest development version from the "
         infoMsg += "GitHub repository"
-        exit(write(infoMsg))
+        write(infoMsg)
 
         debugMsg = "sqlmap will try to update itself using 'git' command"
-        exit(write(debugMsg))
+        write(debugMsg)
 
 
         try:
