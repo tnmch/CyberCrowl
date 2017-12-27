@@ -146,7 +146,6 @@ def update():
 
         try:
             process = subprocess.Popen("git checkout . && git pull %s HEAD" % git_rep, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tool_path.encode(locale.getpreferredencoding()))
-            pollProcess(process, True)
             stdout, stderr = process.communicate()
             success = not process.returncode
         except (IOError, OSError), ex:
