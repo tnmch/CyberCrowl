@@ -3,7 +3,7 @@
 
 
 CyberCrowl is a python Web path scanner tool.
-[![asciicast](https://asciinema.org/a/2ne8hiwimusdkkytvtc7yt4ms.png)](https://asciinema.org/a/2ne8hiwimusdkkytvtc7yt4ms)
+[![asciicast](https://asciinema.org/a/wR08nN64rSYxaFPZf6UYHLvmK.png)](https://asciinema.org/a/wR08nN64rSYxaFPZf6UYHLvmK)
 
 ```
     [+] AUTOR:        Chamli Mohamed
