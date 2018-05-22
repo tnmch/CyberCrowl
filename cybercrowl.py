@@ -306,7 +306,10 @@ def crowl(dirs, url, args):
 
         res = ""
         save = 0
-        f_url  = url + "/" + dir
+        if url.endswith('/'):
+            f_url  = url + dir
+        else:
+            f_url  = url + "/" + dir
         
         # add cookie header
         
@@ -318,24 +321,32 @@ def crowl(dirs, url, args):
         if auth_type == "basic":
             try:
                 ress = requests.get(f_url, headers=headers ,auth=HTTPBasicAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ConnectionError:
+                exit(write("Error Connecting!"))
             except requests.exceptions.ProxyError:
                 exit(write("Check your proxy please! "))
                 
         elif auth_type == "digest":
             try:
                 ress = requests.get(f_url, headers=headers ,auth=HTTPDigestAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ConnectionError:
+                exit(write("Error Connecting!"))
             except requests.exceptions.ProxyError:
                 exit(write("Check your proxy please! "))
                 
         elif auth_type == "ntlm":
             try:
                 ress = requests.get(f_url, headers=headers ,auth=HttpNtlmAuth(auth_cred[0], auth_cred[1]),allow_redirects=False, proxies=proxies, verify=False)
+            except requests.exceptions.ConnectionError:
+                exit(write("Error Connecting!"))
             except requests.exceptions.ProxyError:
                 exit(write("Check your proxy please! "))
 
         else:
             try:
-                ress = requests.get(f_url, headers=headers ,allow_redirects=False, proxies=proxies, verify=False)
+                ress = requests.get(f_url, headers=headers ,allow_redirects=False,verify=False)
+            except requests.exceptions.ConnectionError:
+                exit(write("Error Connecting!"))
             except requests.exceptions.ProxyError:
                 exit(write("Check your proxy please! "))
                 
@@ -404,9 +415,9 @@ def main():
             epilog='''\
         EXAMPLE:
         web site scan with internal wordlist
-          cybercrowl www.domain.com
+          cybercrowl -u www.domain.com
         web site scan with external wordlist
-          cybercrowl www.domain.com -w wordlist.txt
+          cybercrowl -u www.domain.com -w wordlist.txt
                     ''')
 
         parser.add_argument('-u', dest='url', help='specific target url, like domain.com', type=str)
