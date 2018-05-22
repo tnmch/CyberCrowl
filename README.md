@@ -51,11 +51,11 @@ Example
 
 web site scan with internal wordlist
 ```
-  cybercrowl www.domain.com
+  cybercrowl -u www.domain.com
 ```
 web site scan with external wordlist
   ```
-  cybercrowl www.domain.com -w wordlist.txt
+  cybercrowl -u www.domain.com -w wordlist.txt
   ```
 
 
