@@ -6,11 +6,9 @@ CyberCrowl is a python Web path scanner tool.
 [![asciicast](https://asciinema.org/a/vd2s3AMNt0FMqD9ZO1C7uDAWb.png)](https://asciinema.org/a/vd2s3AMNt0FMqD9ZO1C7uDAWb)
 
 ```
-    [+] AUTOR:        Chamli Mohamed
-    [+] EMAIL:        mohamed.chamli@esprit.tn
-    [+] GITHUB:       https://github.com/chamli
-    [+] TWITTER:      https://twitter.com/chamli_mohamed
-    [+] FACEBOOK:     https://fb.com/TnMcH
+    [+] AUTOR:        TnMch
+    [+] GITHUB:       https://github.com/tnmch
+    [+] TWITTER:      https://twitter.com/tnmch_
 ```
 
 Operating Systems supported
@@ -65,7 +63,7 @@ web site scan with external wordlist
 (as root)
 
 ```
-  git clone https://github.com/chamli/CyberCrowl.git
+  git clone https://github.com/tnmch/CyberCrowl.git
   cd CyberCrowl/
   pip install -r requirements.txt
   python cybercrowl.py -h
